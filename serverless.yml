@@ -1,0 +1,32 @@
+service: lambda-layers
+
+provider:
+  name: aws
+  region: ap-northeast-1
+  stage: ${opt:stage, 'dev'}
+  runtime: ruby2.5
+  environment:
+    GEM_PATH: $LAMBDA_TASK_ROOT/vendor/bundle/ruby/2.5.0:/opt/ruby/gems/2.5.0:/opt/ruby/2.5.0
+
+package:
+  individually: true
+
+functions:
+  helloFunc:
+    handler: hello.handler
+    events:
+      - http:
+          path: hello
+          method: get
+    package:
+      include:
+        - hello.rb
+    layers:
+      - { Ref: TestLambdaLayer }
+
+layers:
+  test:
+    path: vendor/bundle
+    name: test-${self:provider.stage}
+    compatibleRuntimes:
+      - ruby2.5

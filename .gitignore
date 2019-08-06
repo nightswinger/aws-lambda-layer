@@ -1,0 +1,4 @@
+/.bundle
+/.serverless
+node_modules
+vendor
